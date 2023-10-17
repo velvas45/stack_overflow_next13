@@ -6,70 +6,10 @@ import LocalSearchBar from "@/components/shared/search/LocalSearchBar";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
+import { getQuestions } from "@/lib/actions/question.action";
 
-export default function Home() {
-  const questionsData = [
-    {
-      _id: 1,
-      title:
-        "Best practices for data fetching in a Next.js application with Server-Side Rendering (SSR)?",
-      tags: [
-        {
-          _id: 2,
-          name: "NEXT.JS",
-        },
-      ],
-      upvotes: 24,
-      answers: [],
-      views: 10031000,
-      author: {
-        _id: 1,
-        name: "Helmi Agustiawan",
-        picture: "https://placehold.co/600x400/000000/FFFFFF.png",
-      },
-      createdAt: new Date("2021-09-03T12:00:00.000Z"),
-    },
-    {
-      _id: 2,
-      title:
-        "Best practices for data fetching in a Next.js application with Server-Side Rendering (SSR)?",
-      upvotes: 24,
-      answers: [],
-      views: 1200,
-      tags: [
-        {
-          _id: 2,
-          name: "NEXT.JS",
-        },
-      ],
-      author: {
-        _id: 1,
-        name: "Helmi Agustiawan",
-        picture: "https://placehold.co/600x400/000000/FFFFFF.png",
-      },
-      createdAt: new Date("2021-09-03T12:00:00.000Z"),
-    },
-    {
-      _id: 3,
-      title:
-        "Best practices for data fetching in a Next.js application with Server-Side Rendering (SSR)?",
-      upvotes: 24,
-      answers: [],
-      views: 1200,
-      tags: [
-        {
-          _id: 2,
-          name: "NEXT.JS",
-        },
-      ],
-      author: {
-        _id: 1,
-        name: "Helmi Agustiawan",
-        picture: "https://placehold.co/600x400/000000/FFFFFF.png",
-      },
-      createdAt: new Date("2021-09-03T12:00:00.000Z"),
-    },
-  ];
+export default async function Home() {
+  const result = await getQuestions({});
 
   return (
     <>
@@ -101,8 +41,8 @@ export default function Home() {
 
       {/* Question Card */}
       <div className="mt-10 flex w-full flex-col gap-6">
-        {questionsData.length > 0 ? (
-          questionsData?.map((question) => (
+        {result.questions.length > 0 ? (
+          result.questions?.map((question) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
