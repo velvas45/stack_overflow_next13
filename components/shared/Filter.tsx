@@ -14,7 +14,7 @@ type filter = {
 };
 
 interface FilterProps {
-  placeholder: string;
+  placeholder?: string;
   filters: filter[];
   otherClasses?: string;
   containerClasses?: string;
