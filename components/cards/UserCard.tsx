@@ -38,7 +38,7 @@ const UserCard = async ({
           <p className="body-regular text-dark500_light500 mt-2">@{username}</p>
         </div>
         <div className="mt-5">
-          {interactedTags.length > 0 ? (
+          {Array.isArray(interactedTags) && interactedTags.length > 0 ? (
             <div className="flex items-center gap-2">
               {interactedTags.map((tag) => (
                 <RenderTag key={tag._id} _id={tag._id} name={tag.name} />

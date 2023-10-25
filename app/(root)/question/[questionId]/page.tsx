@@ -12,7 +12,13 @@ import { getUserById } from "@/lib/actions/user.action";
 import AllAnswers from "@/components/shared/AllAnswers";
 import Votes from "@/components/shared/Votes";
 
-const Page = async ({ params, searchParams }) => {
+const Page = async ({
+  params,
+  searchParams,
+}: {
+  params: { questionId: string };
+  searchParams: any;
+}) => {
   const { questionId } = params;
   const { userId: clerkId } = auth();
 
@@ -41,56 +47,16 @@ const Page = async ({ params, searchParams }) => {
             </p>
           </Link>
           <div className="flex justify-end">
-            <div className="flex gap-5">
-              {/* Voting Feature */}
-              {/* TODO: Create Upvoted and Downvoted Component */}
-              <Votes />
-              {/* <div className="flex-center gap-2.5">
-                <div className="flex-center gap-1.5">
-                  <Image
-                    src={`${
-                      question.downvotes.length > 0
-                        ? "/assets/icons/upvoted.svg"
-                        : "/assets/icons/upvote.svg"
-                    }`}
-                    width={18}
-                    height={18}
-                    alt="upvote"
-                    className={`cursor-pointer`}
-                  />
-                  <div className="flex-center background-light700_dark400 min-w-[18px] rounded-sm p-1">
-                    <p className="subtle-medium text-dark400_light900">
-                      {question.upvotes.length}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex-center gap-1.5">
-                  <Image
-                    src={`${
-                      question.downvotes.length > 0
-                        ? "/assets/icons/downvoted.svg"
-                        : "/assets/icons/downvote.svg"
-                    }`}
-                    width={18}
-                    height={18}
-                    alt="downvotes"
-                    className={`cursor-pointer`}
-                  />
-                  <div className="flex-center background-light700_dark400 min-w-[18px] rounded-sm p-1">
-                    <p className="subtle-medium text-dark400_light900">
-                      {question.downvotes.length}
-                    </p>
-                  </div>
-                </div>
-              </div> */}
-              <Image
-                src="/assets/icons/star-red.svg"
-                width={18}
-                height={18}
-                alt="star"
-                className={`cursor-pointer`}
-              />
-            </div>
+            <Votes
+              totalUpvote={question.upvotes.length}
+              totalDownVote={question.downvotes.length}
+              type="Question"
+              itemId={JSON.stringify(question._id)}
+              userId={JSON.stringify(mongoUser._id)}
+              hasupVoted={question.upvotes.includes(mongoUser._id)}
+              hasdownVoted={question.downvotes.includes(mongoUser._id)}
+              hasSaved={mongoUser?.saved.includes(question._id)}
+            />
           </div>
         </div>
         <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
@@ -128,7 +94,7 @@ const Page = async ({ params, searchParams }) => {
       {/* Tags */}
       <div className="mt-8 flex flex-wrap gap-2">
         {question.tags.length > 0 &&
-          question.tags.map((tag) => (
+          question.tags.map((tag: any) => (
             <RenderTag key={tag._id} _id={tag._id} name={tag.name} />
           ))}
       </div>

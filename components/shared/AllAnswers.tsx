@@ -55,7 +55,15 @@ const AllAnswers = async ({
                 </div>
               </Link>
               <div className="flex justify-end">
-                <Votes />
+                <Votes
+                  totalUpvote={answer.upvotes.length}
+                  totalDownVote={answer.downvotes.length}
+                  type="Answer"
+                  itemId={JSON.stringify(answer._id)}
+                  userId={authorId}
+                  hasupVoted={answer.upvotes.includes(JSON.parse(authorId))}
+                  hasdownVoted={answer.downvotes.includes(JSON.parse(authorId))}
+                />
               </div>
             </div>
             <ParseHTML data={answer.content} />
