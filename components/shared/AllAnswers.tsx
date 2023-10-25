@@ -60,9 +60,9 @@ const AllAnswers = async ({
                   totalDownVote={answer.downvotes.length}
                   type="Answer"
                   itemId={JSON.stringify(answer._id)}
-                  userId={authorId}
-                  hasupVoted={answer.upvotes.includes(JSON.parse(authorId))}
-                  hasdownVoted={answer.downvotes.includes(JSON.parse(authorId))}
+                  userId={JSON.stringify(authorId)}
+                  hasupVoted={answer.upvotes.includes(authorId)}
+                  hasdownVoted={answer.downvotes.includes(authorId)}
                 />
               </div>
             </div>

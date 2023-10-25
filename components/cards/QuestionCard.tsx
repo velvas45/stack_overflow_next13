@@ -13,7 +13,7 @@ interface Tag {
 interface QuestionProps {
   _id: string | number;
   title: string;
-  upvotes: number;
+  upvotes: string[];
   answers: Array<object>;
   views: number;
   tags: Tag[];
@@ -70,7 +70,7 @@ const QuestionCard = ({
           <Metric
             imgUrl="/assets/icons/like.svg"
             alt="upvotes"
-            value={formatAndDivideNumber(upvotes)}
+            value={formatAndDivideNumber(upvotes.length)}
             title=" Votes"
             textStyles="small-medium text-dark400_light800"
           />

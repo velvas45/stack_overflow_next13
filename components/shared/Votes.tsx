@@ -1,4 +1,3 @@
-/* eslint-disable no-constant-condition */
 "use client";
 
 import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.action";
@@ -6,6 +5,7 @@ import {
   downvoteQuestion,
   upvoteQuestion,
 } from "@/lib/actions/question.action";
+import { toggleSaveQuestion } from "@/lib/actions/user.action";
 import { formatAndDivideNumber } from "@/lib/utils";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -32,9 +32,21 @@ const Votes = ({
   hasSaved,
 }: Props) => {
   const pathname = usePathname();
-  const handleSave = () => {};
+  // const router = useRouter();
+
+  const handleSave = async () => {
+    if (!userId) return;
+
+    await toggleSaveQuestion({
+      userId: JSON.parse(userId),
+      questionId: JSON.parse(itemId),
+      path: pathname,
+    });
+  };
 
   const handleVote = async (action: string) => {
+    if (!userId) return;
+
     if (action === "upvote") {
       if (type === "Question") {
         await upvoteQuestion({
@@ -44,7 +56,7 @@ const Votes = ({
           hasdownVoted,
           path: pathname,
         });
-      } else if ("Answer") {
+      } else if (type === "Answer") {
         await upvoteAnswer({
           answerId: JSON.parse(itemId),
           userId: JSON.parse(userId),
@@ -53,7 +65,11 @@ const Votes = ({
           path: pathname,
         });
       }
-    } else {
+
+      // TODO: Show Toast
+    }
+
+    if (action === "downvote") {
       if (type === "Question") {
         await downvoteQuestion({
           questionId: JSON.parse(itemId),
@@ -62,7 +78,7 @@ const Votes = ({
           hasdownVoted,
           path: pathname,
         });
-      } else if ("Answer") {
+      } else if (type === "Answer") {
         await downvoteAnswer({
           answerId: JSON.parse(itemId),
           userId: JSON.parse(userId),
@@ -71,6 +87,7 @@ const Votes = ({
           path: pathname,
         });
       }
+      // TODO: Show Toast
     }
   };
 
