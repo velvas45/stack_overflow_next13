@@ -5,9 +5,10 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { SignedOut, SignedIn, SignOutButton } from "@clerk/nextjs";
+import { SignedOut, SignedIn, SignOutButton, useAuth } from "@clerk/nextjs";
 
 const LeftSidebarContent = () => {
+  const { userId } = useAuth();
   const pathname = usePathname();
   return (
     <div className="flex flex-1 flex-col gap-6">
@@ -15,6 +16,16 @@ const LeftSidebarContent = () => {
         const isActive =
           (pathname.includes(item.route) && item.route.length > 1) ||
           pathname === item.route;
+
+        // TODO -> profile/id
+        if (item.route === "/profile") {
+          if (userId) {
+            item.route = `${item.route}/${userId}`;
+          } else {
+            return null;
+          }
+        }
+
         return (
           <Link
             key={item.route}

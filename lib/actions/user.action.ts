@@ -9,12 +9,15 @@ import {
   DeleteUserParams,
   GetAllUsersParams,
   GetSavedQuestionsParams,
+  GetUserByIdParams,
+  GetUserStatsParams,
   ToggleSaveQuestionParams,
   UpdateUserParams,
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
 import Question from "@/database/question.model";
 import Tag from "@/database/tag.model";
+import Answer from "@/database/answer.model";
 
 export async function getAllUsers(params: GetAllUsersParams) {
   try {
@@ -167,7 +170,6 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
         {
           path: "tags",
           model: Tag,
-          select: "_id name",
         },
         { path: "author", model: User, select: "_id clerkId name picture" },
       ],
@@ -180,6 +182,101 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
     const savedQuestions = user.saved;
 
     return { questions: savedQuestions };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getUserInfo(params: GetUserByIdParams) {
+  try {
+    connectToDatabase();
+
+    const { userId } = params;
+    const user = await User.findOne({ clerkId: userId });
+
+    if (!user) throw new Error("User not found!");
+
+    // Get Total Question and answer for spesific user has created
+    const totalQuestions = await Question.countDocuments({ author: user._id });
+    const totalAnswers = await Answer.countDocuments({ author: user._id });
+
+    return {
+      user,
+      totalQuestions,
+      totalAnswers,
+    };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getUserQuestions(params: GetUserStatsParams) {
+  try {
+    // connect to DB
+    connectToDatabase();
+
+    const { userId, page = 1, pageSize = 10 } = params;
+
+    // get question for user
+    const skipCount = (page! - 1) * pageSize!;
+
+    const questions = await Question.find({ author: userId })
+      .sort({ views: -1, upvotes: -1 })
+      .skip(skipCount)
+      .limit(pageSize!)
+      .populate([
+        {
+          path: "tags",
+          model: Tag,
+        },
+        { path: "author", model: User, select: "_id clerkId name picture" },
+      ]);
+
+    // get total questions
+    const totalQuestions = await Question.countDocuments({
+      author: userId,
+    });
+
+    return {
+      questions,
+      totalQuestions,
+    };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getUserAnswers(params: GetUserStatsParams) {
+  try {
+    // connect to DB
+    connectToDatabase();
+
+    const { userId, page = 1, pageSize = 10 } = params;
+
+    // get answer for user
+    const skipCount = (page! - 1) * pageSize!;
+
+    const answers = await Answer.find({ author: userId })
+      .sort({ upvotes: -1 })
+      .skip(skipCount)
+      .limit(pageSize!)
+      .populate([
+        { path: "author", model: User, select: "_id clerkId name picture" },
+        { path: "question", model: Question, select: "_id title" },
+      ]);
+
+    // get total answers
+    const totalAnswers = await Answer.countDocuments({
+      author: userId,
+    });
+
+    return {
+      answers,
+      totalAnswers,
+    };
   } catch (error) {
     console.log(error);
     throw error;

@@ -4,6 +4,10 @@ import Link from "next/link";
 import RenderTag from "../shared/RenderTag";
 import Metric from "../shared/Metric";
 import { formatAndDivideNumber, getTimestamp } from "@/lib/utils";
+import { SignedIn, auth } from "@clerk/nextjs";
+import EditButton from "../shared/EditButton";
+import DeleteButton from "../shared/DeleteButton";
+import EditDeleteAction from "../shared/EditDeleteAction";
 
 interface Tag {
   _id: number;
@@ -21,8 +25,10 @@ interface QuestionProps {
     _id: string | number;
     name: string;
     picture: string;
+    clerkId: string;
   };
   createdAt: Date;
+  clerkId?: string | null;
 }
 
 const QuestionCard = ({
@@ -34,7 +40,10 @@ const QuestionCard = ({
   views,
   author,
   createdAt,
+  clerkId,
 }: QuestionProps) => {
+  const showActionButtons = clerkId && clerkId === author.clerkId;
+
   return (
     <Card className="card-wrapper rounded-[10px] border-none p-9 sm:px-11">
       <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
@@ -49,8 +58,14 @@ const QuestionCard = ({
           </Link>
         </div>
 
-        {/* If signed in add edit delete actions */}
+        {/* If signed in add (edit delete) actions */}
+        <SignedIn>
+          {showActionButtons && (
+            <EditDeleteAction type="Question" itemId={JSON.stringify(_id)} />
+          )}
+        </SignedIn>
       </div>
+
       <div className="mt-3.5 flex flex-wrap gap-2">
         {tags.map((tag: Tag) => (
           <RenderTag key={tag._id} _id={tag._id} name={tag.name} />

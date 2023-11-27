@@ -7,9 +7,12 @@ import { connectToDatabase } from "../mongoose";
 import {
   AnswerVoteParams,
   CreateAnswerParams,
+  DeleteAnswerParams,
   GetAnswersParams,
 } from "./shared.types";
 import Answer from "@/database/answer.model";
+import Interaction from "@/database/interaction.model";
+import { Tag } from "lucide-react";
 
 export async function createAnswer(params: CreateAnswerParams) {
   // eslint-disable-next-line no-empty
@@ -59,7 +62,7 @@ export async function getAnswers(params: GetAnswersParams) {
     const { questionId, sortBy, page, pageSize } = params;
 
     //    Find Data
-    const answers = await Answer.find({ quetion: questionId })
+    const answers = await Answer.find({ question: questionId })
       //   .populate({
       //     path: "author",
       //     model: User,
@@ -150,5 +153,30 @@ export async function downvoteAnswer(params: AnswerVoteParams) {
   } catch (error) {
     console.log(error);
     throw error;
+  }
+}
+
+export async function deleteAnswer(params: DeleteAnswerParams) {
+  try {
+    // connect to DB
+    connectToDatabase();
+
+    const { answerId, path } = params;
+
+    const answer = await Answer.findById(answerId);
+
+    if (!answer) {
+      throw new Error("Answer not found!");
+    }
+
+    await answer.deleteOne({ _id: answerId });
+    await Question.updateMany(
+      { _id: answer.question },
+      { $pull: { answer: answerId } }
+    );
+
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
   }
 }
