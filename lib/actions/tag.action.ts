@@ -11,7 +11,6 @@ import Tag, { ITag } from "@/database/tag.model";
 import Question from "@/database/question.model";
 import { FilterQuery } from "mongoose";
 import console from "console";
-import { popularTags } from "@/constants";
 
 export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
   try {
@@ -56,6 +55,7 @@ export async function GetQuestionsByTagId(params: GetQuestionsByTagIdParams) {
     // connect to DB
     connectToDatabase();
 
+    // eslint-disable-next-line no-unused-vars
     const { tagId, page = 1, pageSize = 10, searchQuery } = params;
 
     const tagFilter: FilterQuery<ITag> = { _id: tagId };

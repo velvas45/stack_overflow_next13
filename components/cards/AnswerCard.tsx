@@ -1,13 +1,9 @@
 import { getTimestamp, formatAndDivideNumber } from "@/lib/utils";
-import { title } from "process";
 import React from "react";
 import Metric from "../shared/Metric";
 import { Card } from "../ui/card";
 import Link from "next/link";
-import { Tag } from "lucide-react";
-import { SignedIn, auth } from "@clerk/nextjs";
-import DeleteButton from "../shared/DeleteButton";
-import EditButton from "../shared/EditButton";
+import { SignedIn } from "@clerk/nextjs";
 import EditDeleteAction from "../shared/EditDeleteAction";
 
 interface AnswerProps {

@@ -1,7 +1,5 @@
-import page from "@/app/(root)/(home)/page";
 import { getUserAnswers } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
-import QuestionCard from "../cards/QuestionCard";
 import { Button } from "../ui/button";
 import AnswerCard from "../cards/AnswerCard";
 

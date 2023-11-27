@@ -21,7 +21,7 @@ export const ProfileSchema = z.object({
   portfolioLink: z
     .string()
     .url({ message: "Please provide valid URL" })
-    .nullish(),
-  location: z.string().min(3).max(50).nullish(),
+    .optional(),
+  location: z.string().min(3).max(50).optional(),
   bio: z.string().min(3, { message: "Bio must be at least 3 characters." }),
 });

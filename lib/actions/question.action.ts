@@ -7,7 +7,6 @@ import {
   CreateQuestionParams,
   DeleteQuestionParams,
   EditQuestionParams,
-  EditQuestionParams,
   GetQuestionByIdParams,
   GetQuestionsParams,
   QuestionVoteParams,

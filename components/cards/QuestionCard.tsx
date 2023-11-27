@@ -4,9 +4,7 @@ import Link from "next/link";
 import RenderTag from "../shared/RenderTag";
 import Metric from "../shared/Metric";
 import { formatAndDivideNumber, getTimestamp } from "@/lib/utils";
-import { SignedIn, auth } from "@clerk/nextjs";
-import EditButton from "../shared/EditButton";
-import DeleteButton from "../shared/DeleteButton";
+import { SignedIn } from "@clerk/nextjs";
 import EditDeleteAction from "../shared/EditDeleteAction";
 
 interface Tag {
