@@ -59,7 +59,27 @@ export async function getAnswers(params: GetAnswersParams) {
     // connect to DB
     connectToDatabase();
 
-    const { questionId, sortBy, page, pageSize } = params;
+    const { questionId, sortBy, page = 1, pageSize = 10 } = params;
+    const skipAmount = (page - 1) * pageSize;
+    let sortOptions = {};
+
+    switch (sortBy) {
+      case "highestUpvotes":
+        sortOptions = { upvotes: -1 };
+        break;
+      case "lowestUpvotes":
+        sortOptions = { upvotes: 1 };
+        break;
+      case "recent":
+        sortOptions = { createdAt: -1 };
+        break;
+      case "old":
+        sortOptions = { createdAt: 1 };
+        break;
+
+      default:
+        break;
+    }
 
     //    Find Data
     const answers = await Answer.find({ question: questionId })
@@ -69,9 +89,15 @@ export async function getAnswers(params: GetAnswersParams) {
       //     select: "_id clerkId name picture",
       //   })
       .populate("author", "_id clerkId name picture")
+      .skip(skipAmount)
+      .limit(pageSize!)
       .sort({ createdAt: -1 });
 
-    return { answers };
+    const totalAnswer = await Answer.countDocuments({ question: questionId });
+
+    const isNext = totalAnswer > skipAmount + answers.length;
+
+    return { answers, isNext };
   } catch (error) {
     console.log(error);
     throw error;

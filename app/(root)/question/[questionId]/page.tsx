@@ -17,7 +17,7 @@ const Page = async ({
   searchParams,
 }: {
   params: { questionId: string };
-  searchParams: any;
+  searchParams: { filter: string; page: string | number };
 }) => {
   const { questionId } = params;
   const { userId: clerkId } = auth();
@@ -52,9 +52,9 @@ const Page = async ({
               totalDownVote={question.downvotes.length}
               type="Question"
               itemId={JSON.stringify(question._id)}
-              userId={JSON.stringify(mongoUser._id)}
-              hasupVoted={question.upvotes.includes(mongoUser._id)}
-              hasdownVoted={question.downvotes.includes(mongoUser._id)}
+              userId={JSON.stringify(mongoUser?._id)}
+              hasupVoted={question.upvotes.includes(mongoUser?._id)}
+              hasdownVoted={question.downvotes.includes(mongoUser?._id)}
               hasSaved={mongoUser?.saved.includes(question._id)}
             />
           </div>
@@ -101,15 +101,17 @@ const Page = async ({
 
       {/* Answer List */}
       <AllAnswers
-        authorId={mongoUser._id}
+        authorId={mongoUser?._id}
         questionId={question._id}
         totalAnswer={question.answers.length}
+        filter={searchParams?.filter}
+        page={searchParams?.page}
       />
 
       {/* Form Answer */}
       <Answer
         question={question.content}
-        authorId={JSON.stringify(mongoUser._id)}
+        authorId={JSON.stringify(mongoUser?._id)}
         questionId={JSON.stringify(question._id)}
       />
     </>

@@ -7,11 +7,16 @@ import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
 import { getQuestions } from "@/lib/actions/question.action";
+import { SearchParamsProps } from "@/types";
+import Pagination from "@/components/shared/Pagination";
 
-export default async function Home() {
-  const result = await getQuestions({});
-
-  console.log(result.questions[0].tags);
+export default async function Home({ searchParams }: SearchParamsProps) {
+  const { q, filter, page } = searchParams;
+  const result = await getQuestions({
+    searchQuery: q,
+    filter,
+    page: page ? +page : 1,
+  });
 
   return (
     <>
@@ -67,6 +72,13 @@ export default async function Home() {
             linkTitle="Ask a Question"
           />
         )}
+      </div>
+
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={result.isNext}
+        />
       </div>
     </>
   );

@@ -16,20 +16,65 @@ import { revalidatePath } from "next/cache";
 import Answer from "@/database/answer.model";
 import Interaction from "@/database/interaction.model";
 import console from "console";
+import { FilterQuery } from "mongoose";
 
 export async function getQuestions(params: GetQuestionsParams) {
   try {
     // connect to DB
     connectToDatabase();
 
-    const questions = await Question.find({})
+    const { searchQuery, filter, page = 1, pageSize = 10 } = params;
+
+    // Calculate the number of posts to skip based on the page number and page size
+    const skipAmount = (page! - 1) * pageSize!;
+
+    const query: FilterQuery<typeof Question> = {};
+    let sortOptions = {};
+
+    if (searchQuery) {
+      query.$or = [
+        { title: { $regex: new RegExp(searchQuery, "i") } },
+        { content: { $regex: new RegExp(searchQuery, "i") } },
+      ];
+    }
+
+    switch (filter) {
+      case "newest":
+        sortOptions = {
+          createdAt: -1,
+        };
+        break;
+      case "frequent":
+        sortOptions = {
+          views: -1,
+        };
+        break;
+      case "unanswer":
+        query.answers = { $size: 0 };
+        break;
+
+      default:
+        // sortOptions = { createdAt: -1 };
+        break;
+    }
+
+    // Fetch Recommendation
+
+    const questions = await Question.find(query)
       .populate({
         path: "tags",
         model: Tag,
       })
       .populate({ path: "author", model: User })
-      .sort({ createdAt: -1 });
-    return { questions };
+      .skip(skipAmount)
+      .limit(pageSize!)
+      .sort(sortOptions);
+
+    const totalQuestions = await Question.countDocuments(query);
+
+    const isNext = totalQuestions > skipAmount + questions.length;
+
+    return { questions, isNext };
   } catch (error) {
     console.log(error);
     throw error;

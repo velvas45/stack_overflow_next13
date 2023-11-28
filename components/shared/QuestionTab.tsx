@@ -1,8 +1,8 @@
 import { getUserQuestions } from "@/lib/actions/user.action";
 import React from "react";
 import QuestionCard from "../cards/QuestionCard";
-import { Button } from "../ui/button";
 import { SearchParamsProps } from "@/types";
+import Pagination from "./Pagination";
 
 interface Props extends SearchParamsProps {
   userId: string;
@@ -12,7 +12,7 @@ interface Props extends SearchParamsProps {
 const QuestionTab = async ({ userId, searchParams, clerkId }: Props) => {
   const result = await getUserQuestions({
     userId,
-    page: 1,
+    page: searchParams.page ? +searchParams.page : 1,
   });
   return (
     <>
@@ -31,21 +31,12 @@ const QuestionTab = async ({ userId, searchParams, clerkId }: Props) => {
         />
       ))}
 
-      {result.totalQuestions >= 10 && (
-        <div className="flex w-full items-center justify-center gap-2">
-          <Button className="light-border-2 btn flex h-9 min-h-[36px] items-center justify-center gap-2 border px-4 py-2">
-            Prev
-          </Button>
-          <div className="flex items-center justify-center rounded-md bg-primary-500 px-3.5 py-2">
-            <p className="body-semibold text-light-900">
-              {searchParams.page || 1}
-            </p>
-          </div>
-          <Button className="light-border-2 btn flex h-9 min-h-[36px] items-center justify-center gap-2 border px-4 py-2">
-            Next
-          </Button>
-        </div>
-      )}
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={result.isNext}
+        />
+      </div>
     </>
   );
 };
