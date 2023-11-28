@@ -105,7 +105,7 @@ const Page = async ({
         questionId={question._id}
         totalAnswer={question.answers.length}
         filter={searchParams?.filter}
-        page={searchParams?.page}
+        page={searchParams?.page ? +searchParams?.page : 1}
       />
 
       {/* Form Answer */}
