@@ -140,6 +140,7 @@ const Question = ({ mongoUserId, type, questionDetail }: Props) => {
               <FormControl className="mt-3.5">
                 <Input
                   className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
+                  placeholder="Ask your question"
                   {...field}
                 />
               </FormControl>

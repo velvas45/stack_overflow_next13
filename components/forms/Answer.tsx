@@ -17,6 +17,7 @@ import { Button } from "../ui/button";
 import Image from "next/image";
 import { createAnswer } from "@/lib/actions/answer.action";
 import { usePathname } from "next/navigation";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 interface Props {
   authorId: string;
@@ -24,8 +25,9 @@ interface Props {
   question: string;
 }
 
-const Answer = ({ authorId, questionId }: Props) => {
+const Answer = ({ authorId, questionId, question }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmittingAi, setIsSubmittingAi] = useState(false);
   const { mode } = useTheme();
   const pathname = usePathname();
   const editorRef = useRef(null);
@@ -63,21 +65,64 @@ const Answer = ({ authorId, questionId }: Props) => {
     }
   };
 
+  const generateAiAnswer = async () => {
+    if (!authorId) return;
+
+    setIsSubmittingAi(true);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,
+        {
+          method: "POST",
+          body: JSON.stringify({ question }),
+        }
+      );
+
+      const aiAnswer = await response.json();
+
+      if (editorRef.current && aiAnswer.reply) {
+        const editor = editorRef.current as any;
+        editor.setContent(aiAnswer.reply.replace(/\n/g, "<br />"));
+      } else {
+        throw Error("AI Service is maintainced now.");
+      }
+
+      // Toast here...
+    } catch (error) {
+      alert(error);
+    } finally {
+      setIsSubmittingAi(false);
+    }
+  };
+
   return (
     <div>
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
         <h4 className="paragraph-semibold text-dark400_light800">
           Write your answer here
         </h4>
-        <Button className="btn light-border-2 gap-1.5 rounded-md border px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500">
-          <Image
-            src="/assets/icons/stars.svg"
-            alt="start"
-            width={12}
-            height={12}
-            className="object-contain"
-          />
-          Generate an AI Answer
+        <Button
+          className="btn light-border-2 gap-1.5 rounded-md border px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
+          disabled={isSubmittingAi}
+          onClick={generateAiAnswer}>
+          {isSubmittingAi ? (
+            <>
+              <ReloadIcon className="my-2 h-5 w-5 animate-spin text-primary-500" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Image
+                src="/assets/icons/stars.svg"
+                alt="start"
+                width={12}
+                height={12}
+                className="object-contain"
+              />
+              Generate an AI Answer
+            </>
+          )}
         </Button>
       </div>
 

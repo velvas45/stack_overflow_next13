@@ -8,6 +8,7 @@ import {
 } from "@/lib/actions/question.action";
 import { toggleSaveQuestion } from "@/lib/actions/user.action";
 import { formatAndDivideNumber } from "@/lib/utils";
+import { useAuth } from "@clerk/nextjs";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -21,6 +22,7 @@ interface Props {
   hasupVoted: boolean;
   hasdownVoted: boolean;
   hasSaved?: boolean;
+  clerkUserId: string;
 }
 
 const Votes = ({
@@ -32,9 +34,11 @@ const Votes = ({
   hasupVoted,
   hasdownVoted,
   hasSaved,
+  clerkUserId,
 }: Props) => {
   const pathname = usePathname();
   const router = useRouter();
+  const { userId: clerkId } = useAuth();
 
   const handleSave = async () => {
     if (!userId) return;
@@ -100,6 +104,9 @@ const Votes = ({
     });
   }, [itemId, userId, pathname, router]);
 
+  if (clerkId === clerkUserId) {
+    return null;
+  }
   return (
     <div className="flex gap-5">
       <div className="flex-center gap-2.5">

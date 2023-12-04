@@ -27,6 +27,7 @@ const Page = async ({
   if (clerkId) {
     mongoUser = await getUserById({ userId: clerkId });
   }
+
   const { question } = await getQuestionById({ questionId });
   return (
     <>
@@ -48,6 +49,7 @@ const Page = async ({
           </Link>
           <div className="flex justify-end">
             <Votes
+              clerkUserId={clerkId!}
               totalUpvote={question.upvotes.length}
               totalDownVote={question.downvotes.length}
               type="Question"
@@ -101,6 +103,7 @@ const Page = async ({
 
       {/* Answer List */}
       <AllAnswers
+        clerkId={clerkId!}
         authorId={mongoUser?._id}
         questionId={question._id}
         totalAnswer={question.answers.length}

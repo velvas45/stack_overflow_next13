@@ -15,6 +15,7 @@ interface Props {
   totalAnswer: number;
   page?: number;
   filter?: string;
+  clerkId: string;
 }
 
 const AllAnswers = async ({
@@ -23,6 +24,7 @@ const AllAnswers = async ({
   totalAnswer,
   page,
   filter,
+  clerkId,
 }: Props) => {
   const result = await getAnswers({
     questionId,
@@ -61,6 +63,7 @@ const AllAnswers = async ({
               </Link>
               <div className="flex justify-end">
                 <Votes
+                  clerkUserId={clerkId}
                   totalUpvote={answer.upvotes.length}
                   totalDownVote={answer.downvotes.length}
                   type="Answer"
