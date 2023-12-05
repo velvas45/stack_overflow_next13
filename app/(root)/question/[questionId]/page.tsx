@@ -49,7 +49,7 @@ const Page = async ({
           </Link>
           <div className="flex justify-end">
             <Votes
-              clerkUserId={clerkId!}
+              clerkUserId={question.author.clerkId}
               totalUpvote={question.upvotes.length}
               totalDownVote={question.downvotes.length}
               type="Question"

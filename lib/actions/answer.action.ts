@@ -93,11 +93,6 @@ export async function getAnswers(params: GetAnswersParams) {
 
     //    Find Data
     const answers = await Answer.find({ question: questionId })
-      //   .populate({
-      //     path: "author",
-      //     model: User,
-      //     select: "_id clerkId name picture",
-      //   })
       .populate("author", "_id clerkId name picture")
       .skip(skipAmount)
       .limit(pageSize!)
