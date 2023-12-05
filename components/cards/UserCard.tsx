@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import RenderTag from "../shared/RenderTag";
 import { getTopInteractedTags } from "@/lib/actions/tag.action";
+import { Badge } from "lucide-react";
 
 interface Props {
   user: {
@@ -18,7 +19,8 @@ const UserCard = async ({
   user: { _id, clerkId, picture, name, username },
 }: Props) => {
   const interactedTags = await getTopInteractedTags({ userId: _id });
-  //   const interactedTags: any[] = [];
+
+  if (!interactedTags) return null;
 
   return (
     <Link

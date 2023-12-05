@@ -11,6 +11,26 @@ import ProfileLink from "@/components/shared/ProfileLink";
 import Stats from "@/components/shared/Stats";
 import QuestionTab from "@/components/shared/QuestionTab";
 import AnswerTab from "@/components/shared/AnswerTab";
+import { ResolvingMetadata, Metadata } from "next";
+
+type Props = {
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // fetch data
+  const userInfo = await getUserInfo({ userId: params.id });
+
+  return {
+    title: `${userInfo?.user.name} | Dev Overflow`,
+    description:
+      "Dev Overflow is a community of 1,000,000+ developers. Join us.",
+  };
+}
 
 const Pages = async ({ params, searchParams }: URLProps) => {
   const userInfo = await getUserInfo({ userId: params.id });

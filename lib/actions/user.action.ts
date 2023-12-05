@@ -67,8 +67,7 @@ export async function getAllUsers(params: GetAllUsersParams) {
 
     return { users, isNext };
   } catch (error) {
-    console.log(error);
-    throw error;
+    return { users: [], isNext: false };
   }
 }
 
@@ -129,15 +128,16 @@ export async function deleteUser(params: DeleteUserParams) {
 
     // get user question ids
     // eslint-disable-next-line no-unused-vars
-    const userQuestionIds = await Question.find({ author: user._id }).distinct(
-      "_id"
-    );
+    // const userQuestionIds = await Question.find({ author: user._id }).distinct(
+    //   "_id"
+    // );
 
     // delete user question
+    // @ts-ignore
     await Question.deleteMany({ author: user._id });
 
     // TODO: Delete user answers, comment, etc
-
+    // @ts-ignore
     const deletedUser = await User.findByIdAndDelete(user._id);
     return deletedUser;
   } catch (error) {

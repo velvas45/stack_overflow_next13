@@ -10,7 +10,7 @@ import {
 import Tag, { ITag } from "@/database/tag.model";
 import Question from "@/database/question.model";
 import { FilterQuery } from "mongoose";
-import console from "console";
+import Interaction from "@/database/interaction.model";
 
 export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
   try {
@@ -23,15 +23,29 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
     if (!user) return new Error("User not found!");
 
     // Find interactions for the users and group by tags...
-    // Interaction...
+    const userInteractions = await Interaction.find({
+      user: user._id,
+    })
+      .populate({
+        path: "tags",
+        model: Tag,
+      })
+      .exec();
 
-    return [
-      { _id: "1", name: "Tag 1" },
-      { _id: "2", name: "Tag 2" },
-    ];
+    // Extract tags from user's interactions
+    const userTags = userInteractions.reduce((tags, interaction) => {
+      if (tags.length < 3) {
+        if (interaction.tags) {
+          tags = tags.concat(interaction.tags);
+        }
+      }
+
+      return tags;
+    }, []);
+
+    return userTags;
   } catch (error) {
-    console.log(error);
-    throw error;
+    return [];
   }
 }
 
@@ -91,7 +105,7 @@ export async function GetQuestionsByTagId(params: GetQuestionsByTagIdParams) {
     connectToDatabase();
 
     // eslint-disable-next-line no-unused-vars
-    const { tagId, page = 1, pageSize = 1, searchQuery } = params;
+    const { tagId, page = 1, pageSize = 2, searchQuery } = params;
 
     // Calculate the number of posts to skip based on the page number and page size
     const skipAmount = (page! - 1) * pageSize!;
