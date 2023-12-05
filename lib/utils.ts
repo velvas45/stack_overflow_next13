@@ -128,6 +128,7 @@ interface BadgeParams {
   }[];
 }
 
+// set assign badges in badges system
 export const assignBadges = (params: BadgeParams) => {
   const badgeCounts: BadgeCounts = {
     GOLD: 0,
